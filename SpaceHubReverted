@@ -933,16 +933,17 @@ do
         Altar = CFrame.new(1307.13599, -805.292236, -161.363998, 1, 2.40881981e-10, -3.25609947e-15, -2.40881981e-10, 1, -1.35044154e-09, 3.255774e-15, 1.35044154e-09, 1),
         Lava = CFrame.new(-1959.86206, 193.144821, 271.960999, 1, -6.02453598e-09, -2.97388313e-15, 6.02453598e-09, 1, 3.37767716e-08, 2.77039384e-15, -3.37767716e-08, 1),
         Forsaken_Shores = CFrame.new(-2822, 269, 1540),
-        DeepCave = CFrame.new(-978, -250, -2740),
+        DesolateDeep = CFrame.new(-978, -252, -2740),
         Mushrom = CFrame.new(2670, 133.5, -766),
         Statue = CFrame.new(21, 159, -1035),
         Terrapine = CFrame.new(-168, 143, 1968),
         Vertigo = CFrame.new(-142, -516.3, 1158),
+        DesolatePocket = CFrame.new(-1523, -235, -2867),
     }
 
     local DropdownArea = Tabs.Teleports:AddDropdown("DropdownArea", {
         Title = "Fish Area teleport",
-        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DeepCave", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo"},
+        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DesolateDeep", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo", "DesolatePocket"},
         Multi = false,
     })
     DropdownArea:OnChanged(function(Value)
