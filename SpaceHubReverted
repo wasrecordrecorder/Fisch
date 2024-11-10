@@ -584,11 +584,53 @@ function SellFishAndReturnAll()
     end
 end
 
-function TpToTreasure()
+function LootTreasure()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local virtualInputManager = game:GetService("VirtualInputManager")
     for i, v in pairs(workspace.world.chests:GetDescendants()) do
-        if v:IsA("Part") and v:FindFirstChild("ChestSetup") then 
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
-        end 
+        if v:IsA("Part") and v:FindFirstChild("ChestSetup") then
+            humanoidRootPart.CFrame = v.CFrame
+            humanoidRootPart.Anchored = true
+            task.wait(0.5)
+            virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+            task.wait(2)
+            virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+            humanoidRootPart.Anchored = false 
+        end
+    end
+end
+
+function LootAllTreasure()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local virtualInputManager = game:GetService("VirtualInputManager")
+
+    while true do
+        local chestsFound = false
+
+        for i, v in pairs(workspace.world.chests:GetDescendants()) do
+            if v:IsA("Part") and v:FindFirstChild("ChestSetup") then
+                chestsFound = true
+                humanoidRootPart.CFrame = v.CFrame
+                humanoidRootPart.Anchored = true  -- Делаем персонажа Anchored
+                task.wait(0.5)  -- Добавляем небольшую задержку между телепортациями
+
+                -- Зажимаем клавишу "E"
+                virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                task.wait(2)  -- Ждем 2 секунды
+                virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)  -- Отпускаем клавишу "E"
+
+                humanoidRootPart.Anchored = false  -- Делаем персонажа UnAnchored
+                task.wait(0.5)  -- Добавляем небольшую задержку перед следующей телепортацией
+            end
+        end
+
+        if not chestsFound then
+            break  -- Выходим из цикла, если сундуки закончились
+        end
     end
 end
 
@@ -818,10 +860,18 @@ do
     })
 
     Tabs.Main:AddButton({
-        Title = "Tp Treasure",
-        Description = "Teleporting to treasure",
+        Title = "Loot Treasure",
+        Description = "Looting treasure",
         Callback = function()
-            TpToTreasure()
+            LootTreasure()
+        end
+    })
+
+    Tabs.Main:AddButton({
+        Title = "Loot All Treasure",
+        Description = "Looting all treasure",
+        Callback = function()
+            LootAllTreasure()
         end
     })
 
