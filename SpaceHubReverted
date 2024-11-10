@@ -1,4 +1,4 @@
--- v1.6
+-- v1.7
 
 local ProtectPremium = true
 
@@ -47,7 +47,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 local Window = Fluent:CreateWindow({
     Title = "Fisch | Space Hub Crack Reborn",
-    SubTitle = "v1.6",
+    SubTitle = "v1.7",
     TabWidth = 150,
     Size = UDim2.fromOffset(600, 400),
     Theme = "Darker",
@@ -178,7 +178,7 @@ PlayerGUI.ChildAdded:Connect(function(GUI)
             local reelfinishedEvent = ReplicatedStorage:WaitForChild("events"):WaitForChild("reelfinished")
             if reelfinishedEvent then
                 while GUI do
-                    task.wait(2)
+                    task.wait(1)
                     reelfinishedEvent:FireServer(100, false)
                 end
             end
@@ -297,7 +297,6 @@ function ZoneCasting()
                                 end
                             end
                         else
-                            -- Default Zones
                             local selectedZone = Workspace.zones.fishing:FindFirstChild(selectedZoneCast)
                             if selectedZone then
                                 local bobberPosition
@@ -574,7 +573,7 @@ function SellFishAndReturnAll()
     rootPart.CFrame = sellPosition
     task.wait(0.5)
     workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Marc Merchant"):WaitForChild("merchant"):WaitForChild("sellall"):InvokeServer()
-    task.wait(3)
+    task.wait(0.7)
 
     rootPart.CFrame = currentPosition
 
@@ -585,6 +584,7 @@ function SellFishAndReturnAll()
 end
 
 function LootTreasure()
+    local currentPosition2 = rootPart.CFrame
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -598,6 +598,8 @@ function LootTreasure()
             task.wait(2)
             virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             humanoidRootPart.Anchored = false 
+            rootPart = currentPosition2
+            break
         end
     end
 end
@@ -607,7 +609,7 @@ function LootAllTreasure()
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local virtualInputManager = game:GetService("VirtualInputManager")
-
+    local currentPosition1 = rootPart.CFrame
     while true do
         local chestsFound = false
 
@@ -616,7 +618,7 @@ function LootAllTreasure()
                 chestsFound = true
                 humanoidRootPart.CFrame = v.CFrame
                 humanoidRootPart.Anchored = true  -- Делаем персонажа Anchored
-                task.wait(0.5)  -- Добавляем небольшую задержку между телепортациями
+                task.wait(0.2)  -- Добавляем небольшую задержку между телепортациями
 
                 -- Зажимаем клавишу "E"
                 virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
@@ -624,12 +626,13 @@ function LootAllTreasure()
                 virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)  -- Отпускаем клавишу "E"
 
                 humanoidRootPart.Anchored = false  -- Делаем персонажа UnAnchored
-                task.wait(0.5)  -- Добавляем небольшую задержку перед следующей телепортацией
+                task.wait(0.2)  -- Добавляем небольшую задержку перед следующей телепортацией
             end
         end
 
         if not chestsFound then
-            break  -- Выходим из цикла, если сундуки закончились
+            rootPart = currentPosition1
+            break 
         end
     end
 end
@@ -648,7 +651,7 @@ function SellFishAndReturnOne()
     rootPart.CFrame = sellPosition
     task.wait(0.5)
     workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Marc Merchant"):WaitForChild("merchant"):WaitForChild("sell"):InvokeServer()
-    task.wait(3)
+    task.wait(0.7)
 
     rootPart.CFrame = currentPosition
 
@@ -663,6 +666,11 @@ do
     Tabs.Home:AddParagraph({
         Title = "Information",
         Content = "[🟩] - Added\n[🟧] - Changed\n[🟥] - Removed\n[⭐] - Premium Feature"
+    })
+
+    Tabs.Home:AddParagraph({
+        Title = "v1.7 - Reborn!",
+        Content = "[🟩] - Added teleport to some locations\n[🟩] - Loot all treasure\n[🟩] - loot treasure\n[🟥] - Teleport area\n[🟧] - Updated auto fish"
     })
 
     Tabs.Home:AddParagraph({
@@ -772,7 +780,7 @@ do
         Description = "Mouse - Make sure to hide UI and toggle chat off in order for Auto Shake to work!",
         Values = {"Mouse", "Phantom"},
         Multi = false,
-        Default = 1,
+        Default = 2,
     })
     DropdownShake:OnChanged(function(Value)
         ShakeMode = Value
@@ -783,7 +791,7 @@ do
         Title = "AutoShake Delay",
         Description = "Change the delay between every shake",
         Default = 2,
-        Min = 0.2,
+        Min = 0.1,
         Max = 1,
         Rounding = 1,
         Callback = function(Value)
@@ -793,7 +801,7 @@ do
     Slider:OnChanged(function(Value)
         autoShakeDelay = Value
     end)
-    Slider:SetValue(0.5)
+    Slider:SetValue(0.1)
     
     local autoReelCastShakeT = Tabs.Main:AddToggle("autoReelCastShakeT", {Title = "Auto Fish", Default = false })
     autoReelCastShakeT:OnChanged(function(Value)
