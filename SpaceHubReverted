@@ -583,6 +583,15 @@ function SellFishAndReturnAll()
         rememberPosition()
     end
 end
+
+function TpToTreasure()
+    for i, v in pairs(workspace.world.chests:GetDescendants()) do
+        if v:IsA("Part") and v:FindFirstChild("ChestSetup") then 
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+        end 
+    end
+end
+
 function SellFishAndReturnOne()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -809,6 +818,14 @@ do
     })
 
     Tabs.Main:AddButton({
+        Title = "Tp Treasure",
+        Description = "Teleporting to treasure",
+        Callback = function()
+            TpToTreasure()
+        end
+    })
+
+    Tabs.Main:AddButton({
         Title = "Sell one fish",
         Description = "Need to hold fish",
         Callback = function()
@@ -856,11 +873,12 @@ do
         Mushrom = CFrame.new(2670, 133.5, -766),
         Statue = CFrame.new(21, 159, -1035),
         Terrapine = CFrame.new(-168, 143, 1968),
+        Vertigo = CFrame.new(-142, -516.3, 1158),
     }
 
     local DropdownArea = Tabs.Teleports:AddDropdown("DropdownArea", {
         Title = "Fish Area teleport",
-        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DeepCave", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", },
+        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DeepCave", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo"},
         Multi = false,
     })
     DropdownArea:OnChanged(function(Value)
