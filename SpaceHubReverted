@@ -584,6 +584,9 @@ function SellFishAndReturnAll()
 end
 
 function LootTreasure()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local rootPart = character:WaitForChild("HumanoidRootPart")
     local currentPosition2 = rootPart.CFrame
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -595,7 +598,7 @@ function LootTreasure()
             humanoidRootPart.Anchored = true
             task.wait(0.5)
             virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-            task.wait(2)
+            task.wait(3)
             virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             humanoidRootPart.Anchored = false 
             rootPart = currentPosition2
@@ -605,6 +608,9 @@ function LootTreasure()
 end
 
 function LootAllTreasure()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local rootPart = character:WaitForChild("HumanoidRootPart")
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -622,7 +628,7 @@ function LootAllTreasure()
 
                 -- Зажимаем клавишу "E"
                 virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-                task.wait(2)  -- Ждем 2 секунды
+                task.wait(3)  -- Ждем 2 секунды
                 virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)  -- Отпускаем клавишу "E"
 
                 humanoidRootPart.Anchored = false  -- Делаем персонажа UnAnchored
@@ -791,7 +797,7 @@ do
         Title = "AutoShake Delay",
         Description = "Change the delay between every shake",
         Default = 2,
-        Min = 0.1,
+        Min = 0.01,
         Max = 1,
         Rounding = 1,
         Callback = function(Value)
@@ -801,7 +807,7 @@ do
     Slider:OnChanged(function(Value)
         autoShakeDelay = Value
     end)
-    Slider:SetValue(0.1)
+    Slider:SetValue(0.01)
     
     local autoReelCastShakeT = Tabs.Main:AddToggle("autoReelCastShakeT", {Title = "Auto Fish", Default = false })
     autoReelCastShakeT:OnChanged(function(Value)
