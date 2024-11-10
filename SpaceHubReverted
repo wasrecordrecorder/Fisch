@@ -939,11 +939,12 @@ do
         Terrapine = CFrame.new(-168, 143, 1968),
         Vertigo = CFrame.new(-142, -516.3, 1158),
         DesolatePocket = CFrame.new(-1523, -235, -2867),
+        BrainPool = CFrame.new(-1797, -143, -3411),
     }
 
     local DropdownArea = Tabs.Teleports:AddDropdown("DropdownArea", {
         Title = "Fish Area teleport",
-        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DesolateDeep", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo", "DesolatePocket"},
+        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DesolateDeep", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo", "DesolatePocket", "BrainPool"},
         Multi = false,
     })
     DropdownArea:OnChanged(function(Value)
