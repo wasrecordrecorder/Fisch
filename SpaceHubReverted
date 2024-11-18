@@ -300,32 +300,30 @@ function ZoneCasting()
                         elseif selectedZoneCast == "Ancient Serpent" then
                             local selectedZone = Workspace.zones.fishing:FindFirstChild("The Depths - Serpent")
                             if selectedZone then
-                                    local bobberPosition = CFrame.new(selectedZone.Position.X, -749.6, selectedZone.Position.Z)
-                                    hasBobber.CFrame = bobberPosition
-                                    
-                                    local platform = Instance.new("Part")
-                                    platform.Size = platformSize
-                                    platform.Position = hasBobber.Position + platformPositionOffset
-                                    platform.Anchored = true
-                                    platform.Parent = hasBobber
-                                    platform.BrickColor = BrickColor.new("Bright blue")
-                                    platform.Transparency = 1.000
-                                end
+                                local bobberPosition = CFrame.new(selectedZone.Position.X, -749.6, selectedZone.Position.Z)
+                                hasBobber.CFrame = bobberPosition
+                                
+                                local platform = Instance.new("Part")
+                                platform.Size = platformSize
+                                platform.Position = hasBobber.Position + platformPositionOffset
+                                platform.Anchored = true
+                                platform.Parent = hasBobber
+                                platform.BrickColor = BrickColor.new("Bright blue")
+                                platform.Transparency = 1.000
                             end
                         elseif selectedZoneCast == "Whale Shark" then
                             local selectedZone = Workspace.zones.fishing:FindFirstChild("Whale Shark")
                             if selectedZone then
-                                    local bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
-                                    hasBobber.CFrame = bobberPosition
-                                    
-                                    local platform = Instance.new("Part")
-                                    platform.Size = platformSize
-                                    platform.Position = hasBobber.Position + platformPositionOffset
-                                    platform.Anchored = true
-                                    platform.Parent = hasBobber
-                                    platform.BrickColor = BrickColor.new("Bright blue")
-                                    platform.Transparency = 1.000
-                                end
+                                local bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
+                                hasBobber.CFrame = bobberPosition
+                                
+                                local platform = Instance.new("Part")
+                                platform.Size = platformSize
+                                platform.Position = hasBobber.Position + platformPositionOffset
+                                platform.Anchored = true
+                                platform.Parent = hasBobber
+                                platform.BrickColor = BrickColor.new("Bright blue")
+                                platform.Transparency = 1.000
                             end
                         else
                             local selectedZone = Workspace.zones.fishing:FindFirstChild(selectedZoneCast)
