@@ -180,7 +180,9 @@ PlayerGUI.ChildAdded:Connect(function(GUI)
             if reelfinishedEvent then
                 while GUI do
                     task.wait(1)
-                    if isKirillAfk return
+                    if isKirillAfk then
+                        break
+                    end    
                     reelfinishedEvent:FireServer(100, false)
                 end
             end
@@ -191,7 +193,9 @@ function AutoFish5()
     if autoShake3 then
         task.spawn(function()
             while AutoFish do
-                if isKirillAfk return
+                if isKirillAfk then
+                    break
+                end    
                 local PlayerGUI = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
                 local shakeUI = PlayerGUI:FindFirstChild("shakeui")
                 if shakeUI and shakeUI.Enabled then
@@ -218,7 +222,9 @@ function AutoFish5()
     else
         task.spawn(function()
             while AutoFish do
-                if isKirillAfk return
+                if isKirillAfk then
+                    break
+                end    
                 task.wait(autoShakeDelay)
                 local PlayerGUI = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
                 local shakeUI = PlayerGUI:FindFirstChild("shakeui")
