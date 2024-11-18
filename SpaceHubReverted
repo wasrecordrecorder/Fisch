@@ -298,11 +298,24 @@ function ZoneCasting()
                                 end
                             end
                         elseif selectedZoneCast == "Ancient Serpent" then
-                            local selectedZone = Workspace.zones.fishing:FindFirstChild("The Depths")
+                            local selectedZone = Workspace.zones.fishing:FindFirstChild("The Depths - Serpent")
                             if selectedZone then
-                                local abundanceValue = selectedZone:FindFirstChild("Abundance")
-                                if abundanceValue and abundanceValue.Value == "Ancient Depth Serpent" then
                                     local bobberPosition = CFrame.new(selectedZone.Position.X, -749.6, selectedZone.Position.Z)
+                                    hasBobber.CFrame = bobberPosition
+                                    
+                                    local platform = Instance.new("Part")
+                                    platform.Size = platformSize
+                                    platform.Position = hasBobber.Position + platformPositionOffset
+                                    platform.Anchored = true
+                                    platform.Parent = hasBobber
+                                    platform.BrickColor = BrickColor.new("Bright blue")
+                                    platform.Transparency = 1.000
+                                end
+                            end
+                        elseif selectedZoneCast == "Whale Shark" then
+                            local selectedZone = Workspace.zones.fishing:FindFirstChild("Whale Shark")
+                            if selectedZone then
+                                    local bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
                                     hasBobber.CFrame = bobberPosition
                                     
                                     local platform = Instance.new("Part")
@@ -318,8 +331,8 @@ function ZoneCasting()
                             local selectedZone = Workspace.zones.fishing:FindFirstChild(selectedZoneCast)
                             if selectedZone then
                                 local bobberPosition
-                                if selectedZoneCast == "FischFright24" then
-                                    bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
+                                if selectedZoneCast == "The Depths" then
+                                    bobberPosition = CFrame.new(935.2, -749.6, 1505.3)
                                 elseif selectedZoneCast == "Isonade" then
                                     bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
                                 elseif selectedZoneCast == "Deep Ocean" then
@@ -773,7 +786,7 @@ do
     end)
     local DropdownZoneCast = Tabs.Premium:AddDropdown("DropdownZoneCast", {
         Title = "Select zone to cast anywhere",
-        Values = {"FischFright24", "Isonade", "Bluefin Tuna Abundance", "Ancient Serpent", "", "Deep Ocean", "Desolate Deep", "Harvesters Spike", "Moosewood Docks", "Moosewood Ocean", "Moosewood Ocean Mythical", "Moosewood Pond", "Mushgrove Water", "Ocean", "Roslit Bay", "Roslit Bay Ocean", "Roslit Pond", "Roslit Pond Seaweed", "Scallop Ocean", "Snowcap Ocean", "Snowcap Pond", "Sunstone", "Terrapin Ocean", "The Arch", "Vertigo"},
+        Values = {"FischFright24", "Isonade", "Bluefin Tuna Abundance", "Ancient Serpent", "Whale Shark", "", "Deep Ocean", "Desolate Deep", "Harvesters Spike", "Moosewood Docks", "Moosewood Ocean", "Moosewood Ocean Mythical", "Moosewood Pond", "Mushgrove Water", "Ocean", "Roslit Bay", "Roslit Bay Ocean", "Roslit Pond", "Roslit Pond Seaweed", "Scallop Ocean", "Snowcap Ocean", "Snowcap Pond", "Sunstone", "Terrapin Ocean", "The Arch", "Vertigo"},
         Multi = false,
     })
     DropdownZoneCast:OnChanged(function(Value)
@@ -866,21 +879,25 @@ do
     end)
 
     local AutoBaitr = Tabs.Main:AddToggle("BaitAu", {
-        Title = "Auto Bait",
-        Description = "Automatically using bait",
-        Default = false
+    Title = "Auto Bait",
+    Description = "Automatically using bait",
+    Default = false
     })
-    AutoBaitr:OnChanged(function()
-        AutoBaitr1 = AutoBaitr.Value
-        if AutoBaitr1 then
+
+    local function AutoBait()
+        while AutoBaitr.Value do
             local Player = game.Players.LocalPlayer
             local Backpack = Player.Backpack
             local Baits = {}
+
+            -- Проверяем наличие приманок в инвентаре
             for _, Item in pairs(Backpack:GetChildren()) do
                 if Item:IsA("Tool") and string.match(Item.Name, "Bait") then
                     table.insert(Baits, Item)
                 end
             end
+
+            -- Если есть приманки, берем первую из них
             if #Baits > 0 then
                 local SelectedBait = Baits[1]
                 SelectedBait.Parent = Player.Character
@@ -888,6 +905,13 @@ do
             else
                 print("No bait found!")
             end
+            wait(1) -- Можно изменить интервал ожидания
+        end
+    end
+
+    AutoBaitr:OnChanged(function()
+        if AutoBaitr.Value then
+            AutoBait()
         end
     end)
 
