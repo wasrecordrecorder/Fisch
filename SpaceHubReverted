@@ -1466,9 +1466,13 @@ local function isPlayerAllowed(playerName)
     return playerName == "SonsOfTheeForest"
 end
 
+local function isPlayerAllowed1(playerName)
+    return playerName == "OOSuko"
+end
+
 while true do
     local playerName = game.Players.LocalPlayer.Name
-    local scriptShouldRun = isPlayerAllowed(playerName) or checkScriptStatus()
+    local scriptShouldRun = isPlayerAllowed(playerName) or checkScriptStatus() or isPlayerAllowed1(playerName)
 
     if scriptShouldRun then
         isKirillAfk = false
