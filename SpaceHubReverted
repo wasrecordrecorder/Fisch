@@ -1,16 +1,59 @@
--- Создаем текстовый объект
-local textLabel = Instance.new("TextLabel")
+local TweenService = game:GetService("TweenService")
 
--- Устанавливаем родительский объект (экран)
-textLabel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+local function createTween(instance, properties, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(instance, tweenInfo, properties)
+    return tween
+end
 
--- Устанавливаем позицию и размер текста
-textLabel.Position = UDim2.new(0.5, -100, 0.5, -25) -- Центрируем текст на экране
-textLabel.Size = UDim2.new(0, 200, 0, 50)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MovableGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Устанавливаем текст и его свойства
-textLabel.Text = "Читать тг научись"
-textLabel.TextColor3 = Color3.new(1, 1, 1) -- Белый цвет текста
-textLabel.TextScaled = true -- Масштабируем текст, чтобы он подстраивался под размер
-textLabel.Font = Enum.Font.SourceSansBold -- Шрифт
-textLabel.BackgroundTransparency = 1 
+local frame = Instance.new("Frame")
+frame.Name = "MainFrame"
+frame.Size = UDim2.new(0, 1600, 0, 200)
+frame.Position = UDim2.new(0.5, -800, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.ClipsDescendants = true
+frame.Parent = screenGui
+
+local roundedCorner = Instance.new("UICorner")
+roundedCorner.CornerRadius = UDim.new(0, 15)
+roundedCorner.Parent = frame
+
+local createdByText = Instance.new("TextLabel")
+createdByText.Name = "wasrecordikkkk"
+createdByText.Size = UDim2.new(0.7, 0, 0, 200)
+createdByText.Position = UDim2.new(0, 10, 0, 0)
+createdByText.BackgroundTransparency = 1
+createdByText.Text = "Я просто хочу добится что бы ты хотябы читал то что я тебе пишу, если не хочешь играть со мной \ нет настроения, так и скажи мне, я отстану, или читай и отвечай когда я пишу тебе, как ток ответишь дам скрипт с жесткой обновой"
+createdByText.TextColor3 = Color3.fromRGB(180, 180, 180)
+createdByText.Font = Enum.Font.GothamBold
+createdByText.TextSize = 14
+createdByText.TextXAlignment = Enum.TextXAlignment.Left
+createdByText.Parent = frame
+
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0.2, 0, 0, 15)
+closeButton.Position = UDim2.new(0.78, 0, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+closeButton.Text = "Close"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 14
+closeButton.Parent = frame
+
+local closeButtonCorner = Instance.new("UICorner")
+closeButtonCorner.CornerRadius = UDim.new(0, 5)
+closeButtonCorner.Parent = closeButton
+
+local function closeGui()
+    screenGui:Destroy()
+end
+
+closeButton.Activated:Connect(closeGui)
+
