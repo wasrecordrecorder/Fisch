@@ -152,6 +152,8 @@ local HumanoidRootPart = LocalCharacter:FindFirstChild("HumanoidRootPart")
 local ActiveFolder = Workspace:FindFirstChild("active")
 local PlayerGUI = LocalPlayer:FindFirstChildOfClass("PlayerGui")
 
+local ToolTipFolder = PlayerGUI.hud.safezone:FindFirstChild("backpack")
+
 -- Varbiables
 
 local AutoFreeze = false
@@ -936,6 +938,22 @@ do
         end
     end
 
+    local function deleteToolTipObjects()
+        local playerName = game.Players.LocalPlayer.Name
+        local backpackFolder = game.Players[playerName].PlayerGui.hud.safezone.backpack
+
+        if not backpackFolder then
+            warn("Backpack folder not found.")
+            return
+        end
+
+        for _, child in ipairs(backpackFolder:GetChildren()) do
+            if string.match(child.Name, "ToolTip") then
+                child:Destroy()
+            end
+        end
+    end
+
     local AutoRemover = Tabs.Main:AddToggle("BaitAu", {
     Title = "Remove Lagg Objects",
     Description = "Removing some parts of game.",
@@ -945,6 +963,7 @@ do
     local function Removerr()
         while AutoRemover.Value do
             deleteAllObjects()
+            deleteToolTipObjects()
             wait(1) 
         end
     end
