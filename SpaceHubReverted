@@ -962,6 +962,57 @@ do
         AntiAfk = AntiAfk3.Value
         AntiAfk2()
     end)
+    local section = Tabs.Main:AddSection("Treasure")
+
+    Tabs.Main:AddButton({
+    Title = "Repair Map",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+        local humanoid = character:WaitForChild("Humanoid")
+        local CurrPos = humanoidRootPart.CFrame
+        humanoidRootPart.CFrame = CFrame.new(-2824.359, 214.311, 1518.130)
+        wait(2)
+        local treasureMapTool = nil
+        for _, v in pairs(player.Backpack:GetChildren()) do
+            if v.Name == "Treasure Map" then
+                treasureMapTool = v
+                break
+            end
+        end
+        if not treasureMapTool then
+            warn("Treasure Map tool not found in inventory.")
+            humanoidRootPart.CFrame = CurrPos
+            return
+        end
+        local success, err = pcall(function()
+            humanoid:EquipTool(treasureMapTool)
+            workspace.world.npcs["Jack Marrow"].treasure.repairmap:InvokeServer()
+        end)
+        if not success then
+            warn("Failed to repair map: ", err)
+        end
+        humanoidRootPart.CFrame = CurrPos
+    end
+    })
+
+    Tabs.Main:AddButton({
+        Title = "Loot Treasure",
+        Description = "Looting treasure",
+        Callback = function()
+            LootTreasure()
+        end
+    })
+
+    Tabs.Main:AddButton({
+        Title = "Loot All Treasure",
+        Description = "Looting all treasure",
+        Callback = function()
+            LootAllTreasure()
+        end
+    })
+
 
     local section = Tabs.Main:AddSection("Additional")
 
@@ -980,22 +1031,6 @@ do
         Rounding = 1,
         Callback = function(Value)
             AutoSellDelay = Value
-        end
-    })
-
-    Tabs.Main:AddButton({
-        Title = "Loot Treasure",
-        Description = "Looting treasure",
-        Callback = function()
-            LootTreasure()
-        end
-    })
-
-    Tabs.Main:AddButton({
-        Title = "Loot All Treasure",
-        Description = "Looting all treasure",
-        Callback = function()
-            LootAllTreasure()
         end
     })
 
@@ -1158,7 +1193,7 @@ Tabs.Misc:AddButton({
     Description = "",
     Callback = function()
         local RequireRod = PlayerGUI.hud.safezone.equipment.rods.scroll.safezone:FindFirstChild("Rod Of The Depths")
-        if not RequireRod then return ShowNotification("Requirement Rod Of The Depths") end
+        if not RequireRod then return print("Requirement Rod Of The Depths") end
         for i,v in pairs(LocalPlayer.Backpack:GetChildren()) do 
             if v:FindFirstChild("offer") then
                 v.Parent = LocalPlayer.Character
