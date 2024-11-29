@@ -903,18 +903,17 @@ do
     local function AutoBait()
         while AutoBaitr.Value do
             local Player = game.Players.LocalPlayer
-            local Backpack = Player.Backpack
+            local Backpack = PlayerGUI.hud.safezone.equipment.bait.scroll.safezone
             local Baits = {}
 
-            -- Проверяем наличие приманок в инвентаре
             for _, Item in pairs(Backpack:GetChildren()) do
-                if Item:IsA("Tool") and string.match(Item.Name, "Bait") then
+                if string.match(Item.Name, "Rapid Catcher") or string.match(Item.Name, "Maggot") or string.match(Item.Name, "Shrimp") or string.match(Item.Name, "Insect") or string.match(Item.Name, "Night Shrimp") or string.match(Item.Name, "Weird Algae") or string.match(Item.Name, "Truffle Worm") or string.match(Item.Name, "Super Flakes") or string.match(Item.Name, "Minnow") or string.match(Item.Name, "Bagel") or string.match(Item.Name, "Magnet") or string.match(Item.Name, "Squid") or string.match(Item.Name, "Flakes") or string.match(Item.Name, "Seaweed") then
                     table.insert(Baits, Item)
                 end
             end
             if #Baits > 0 then
                 local SelectedBait = Baits[1]
-                SelectedBait.Parent = Player.Character
+                
                 print("Equipped bait:", SelectedBait.Name)
             else
                 print("No bait found!")
