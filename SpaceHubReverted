@@ -28,6 +28,7 @@ UserInputService = game:GetService("UserInputService")
 VirtualInputManager = game:GetService("VirtualInputManager")
 ContextActionService = game:GetService("ContextActionService")
 GuiService = game:GetService("GuiService")
+local shadowsFolder = game.Workspace:FindFirstChild("Shadows")
 print("ClientMonsterTools.lua loaded")
 
 local isKirillAfk = false
@@ -911,8 +912,6 @@ do
                     table.insert(Baits, Item)
                 end
             end
-
-            -- Если есть приманки, берем первую из них
             if #Baits > 0 then
                 local SelectedBait = Baits[1]
                 SelectedBait.Parent = Player.Character
@@ -920,7 +919,7 @@ do
             else
                 print("No bait found!")
             end
-            wait(1) -- Можно изменить интервал ожидания
+            wait(1) 
         end
     end
 
@@ -929,6 +928,34 @@ do
             AutoBait()
         end
     end)
+
+
+    local function deleteAllObjects()
+        local children = shadowsFolder:GetChildren()
+        for _, child in ipairs(children) do
+            child:Destroy()
+        end
+    end
+
+    local AutoRemover = Tabs.Main:AddToggle("BaitAu", {
+    Title = "Remove Lagg Objects",
+    Description = "Removing some parts of game.",
+    Default = false
+    })
+
+    local function Removerr()
+        while AutoRemover.Value do
+            deleteAllObjects()
+            wait(1) 
+        end
+    end
+
+    AutoRemover:OnChanged(function()
+        if AutoRemover.Value then
+            Removerr()
+        end
+    end)
+
 
     local AntiAfk3 = Tabs.Main:AddToggle("AntiAfk3", {Title = "Anti-AFK", Description = "Prevents the player from being marked as AFK", Default = false })
     AntiAfk3:OnChanged(function(Value)
@@ -1090,6 +1117,62 @@ do
         AutoAppraiser = ToggleAutoApprari.Value
         Appraise()
     end)
+    local RodDupeDelay = 0
+    
+    local section = Tabs.Misc:AddSection("Shadows")
+
+local RodDupe = Tabs.Misc:AddToggle("RodDupe", {Title = "Rod Of The Depths Spam", Default = false })
+RodDupe:OnChanged(function()
+    if not PlayerGUI or not PlayerGUI.hud or not PlayerGUI.hud.safezone or not PlayerGUI.hud.safezone.equipment or not PlayerGUI.hud.safezone.equipment.rods or not PlayerGUI.hud.safezone.equipment.rods.scroll or not PlayerGUI.hud.safezone.equipment.rods.scroll.safezone then
+        return print("PlayerGUI.hud structure is not found")
+    end
+
+    local RequireRod = PlayerGUI.hud.safezone.equipment.rods.scroll.safezone:FindFirstChild("Rod Of The Depths")
+
+    if not RequireRod then return print("Requirement Rod Of The Depths") end
+    
+    while RodDupe.Value do
+        local args1 = {[1] = "Flimsy Rod"}
+        game:GetService("ReplicatedStorage").events.equiprod:FireServer(unpack(args1))
+
+        local args2 = {[1] = "Rod Of The Depths"}
+        game:GetService("ReplicatedStorage").events.equiprod:FireServer(unpack(args2))
+        task.wait(RodDupeDelay)
+    end
+end)
+
+local RodDupe_Delay = Tabs.Misc:AddSlider("RodDupe_Delay", {
+    Title = "Rod Of The Depths Spam Delay",
+    Description = "",
+    Default = 0.2,
+    Min = 0,
+    Max = 1,
+    Rounding = 1,
+    Callback = function(Value)
+        RodDupeDelay = Value
+    end
+})
+
+Tabs.Misc:AddButton({
+    Title = "Dupe Shadow",
+    Description = "",
+    Callback = function()
+        local RequireRod = PlayerGUI.hud.safezone.equipment.rods.scroll.safezone:FindFirstChild("Rod Of The Depths")
+        if not RequireRod then return ShowNotification("Requirement Rod Of The Depths") end
+        for i,v in pairs(LocalPlayer.Backpack:GetChildren()) do 
+            if v:FindFirstChild("offer") then
+                v.Parent = LocalPlayer.Character
+            end
+        end
+        task.wait(2)
+        for i,v in pairs(LocalPlayer.Character:GetChildren()) do 
+            if v:FindFirstChild("offer") then
+                v.Parent = LocalPlayer.Backpack
+            end
+        end
+    end
+})
+
 
     local section = Tabs.Misc:AddSection("Halloween🎃")
 
