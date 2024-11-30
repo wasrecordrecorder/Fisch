@@ -245,6 +245,9 @@ function AutoFish5()
         end)
     end
 end
+
+local playerPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+
 function ZoneCasting()
     if not ProtectPremium then
         return
@@ -302,18 +305,22 @@ function ZoneCasting()
                                 end
                             end
                         elseif selectedZoneCast == "Ancient Serpent" then
-                            local selectedZone = Workspace.zones.fishing:FindFirstChild("The Depths - Serpent")
-                            if selectedZone then
-                                local bobberPosition = CFrame.new(selectedZone.Position.X, -749.6, selectedZone.Position.Z)
-                                hasBobber.CFrame = bobberPosition
-                                
-                                local platform = Instance.new("Part")
-                                platform.Size = platformSize
-                                platform.Position = hasBobber.Position + platformPositionOffset
-                                platform.Anchored = true
-                                platform.Parent = hasBobber
-                                platform.BrickColor = BrickColor.new("Bright blue")
-                                platform.Transparency = 1.000
+                                local selectedZone = Workspace.zones.fishing:FindFirstChild("The Depths - Serpent")
+                                if selectedZone then
+                                    local playerOffset = Vector3.new(0, 0, -5)
+                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(selectedZone.Position.X, -749.6, selectedZone.Position.Z) + playerOffset
+                                    local bobberPosition = CFrame.new(selectedZone.Position.X, -749.6, selectedZone.Position.Z)
+                                    hasBobber.CFrame = bobberPosition
+                                    local platform = Instance.new("Part")
+                                    platform.Size = platformSize
+                                    platform.Position = hasBobber.Position + platformPositionOffset
+                                    platform.Anchored = true
+                                    platform.Parent = hasBobber
+                                    platform.BrickColor = BrickColor.new("Bright blue")
+                                    platform.Transparency = 1.000
+                                else
+                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(playerPosition)
+                                end
                             end
                         elseif selectedZoneCast == "Whale Shark" then
                             local selectedZone = Workspace.zones.fishing:FindFirstChild("Whale Shark")
