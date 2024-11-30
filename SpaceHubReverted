@@ -983,7 +983,7 @@ do
     local section = Tabs.Main:AddSection("Treasure")
 
     Tabs.Main:AddButton({
-    Title = "Repair Map",
+    Title = "Repair Maps",
     Callback = function()
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
@@ -992,24 +992,25 @@ do
         local CurrPos = humanoidRootPart.CFrame
         humanoidRootPart.CFrame = CFrame.new(-2824.359, 214.311, 1518.130)
         wait(2)
-        local treasureMapTool = nil
+        local treasureMapTools = {}
         for _, v in pairs(player.Backpack:GetChildren()) do
             if v.Name == "Treasure Map" then
-                treasureMapTool = v
-                break
+                table.insert(treasureMapTools, v)
             end
         end
-        if not treasureMapTool then
-            warn("Treasure Map tool not found in inventory.")
+        if #treasureMapTools == 0 then
+            warn("No Treasure Map tools found in inventory.")
             humanoidRootPart.CFrame = CurrPos
             return
         end
-        local success, err = pcall(function()
-            humanoid:EquipTool(treasureMapTool)
-            workspace.world.npcs["Jack Marrow"].treasure.repairmap:InvokeServer()
-        end)
-        if not success then
-            warn("Failed to repair map: ", err)
+        for _, tool in pairs(treasureMapTools) do
+            local success, err = pcall(function()
+                humanoid:EquipTool(tool)
+                workspace.world.npcs["Jack Marrow"].treasure.repairmap:InvokeServer()
+            end)
+            if not success then
+                warn("Failed to repair map: ", err)
+            end
         end
         humanoidRootPart.CFrame = CurrPos
     end
@@ -1175,7 +1176,7 @@ do
     local section = Tabs.Misc:AddSection("Shadows")
 
 local RodDupe = Tabs.Misc:AddToggle("RodDupe", {Title = "Rod Of The Depths Spam", Default = false })
-RodDupe:OnChanged(function()
+    RodDupe:OnChanged(function()
     if not PlayerGUI or not PlayerGUI.hud or not PlayerGUI.hud.safezone or not PlayerGUI.hud.safezone.equipment or not PlayerGUI.hud.safezone.equipment.rods or not PlayerGUI.hud.safezone.equipment.rods.scroll or not PlayerGUI.hud.safezone.equipment.rods.scroll.safezone then
         return print("PlayerGUI.hud structure is not found")
     end
@@ -1197,7 +1198,7 @@ end)
 local RodDupe_Delay = Tabs.Misc:AddSlider("RodDupe_Delay", {
     Title = "Rod Of The Depths Spam Delay",
     Description = "",
-    Default = 0.2,
+    Default = 0.3,
     Min = 0,
     Max = 1,
     Rounding = 1,
@@ -1225,6 +1226,27 @@ Tabs.Misc:AddButton({
         end
     end
 })
+
+
+local DupeShadow = Tabs.Misc:AddToggle("Dupe Shadow", {Title = "Auto Dupe Shadows", Default = false })
+    DupeShadow:OnChanged(function()
+    while DupeShadow.Value do
+        local RequireRod = PlayerGUI.hud.safezone.equipment.rods.scroll.safezone:FindFirstChild("Rod Of The Depths")
+        if not RequireRod then return print("Requirement Rod Of The Depths") end
+        for i,v in pairs(LocalPlayer.Backpack:GetChildren()) do 
+            if v:FindFirstChild("offer") then
+                v.Parent = LocalPlayer.Character
+            end
+        end
+        task.wait(2)
+        for i,v in pairs(LocalPlayer.Character:GetChildren()) do 
+            if v:FindFirstChild("offer") then
+                v.Parent = LocalPlayer.Backpack
+            end
+        end
+        task.wait(2)
+    end
+end)
 
 
     local section = Tabs.Misc:AddSection("Halloween🎃")
