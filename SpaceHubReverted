@@ -1111,10 +1111,10 @@ do
                             end
                             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
                             task.wait(0.5)  
-                            local input = game:GetService("UserInputService")
-                            input:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
+                            local input = game:GetService("VirtualInputManager")
+                            input:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                             task.wait(0.1)
-                            input:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
+                            input:SendKeyEvent(false, Enum.KeyCode.E, false, game)
                             task.wait(1)
                             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
                             task.wait(0.5)
@@ -1131,58 +1131,101 @@ do
     end
     })
 
-local processedGroups = {} 
+    local processedGroups = {} 
 
-local function autoLootMeteors()
-    while AutoLootMeteorsT.Value do
-        local meteorItems = game.Workspace.MeteorItems
-        if meteorItems then
-            for _, group in pairs(meteorItems:GetChildren()) do
-                if group:IsA("Model") and not processedGroups[group] then
-                    for _, part in pairs(group:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
-                            local wasAutoFreezeActive = false
-                            if AutoFreeze then
-                                wasAutoFreezeActive = true
-                                AutoFreeze = false
+    local function autoLootMeteors()
+    print("1")
+        while AutoLootMeteors do
+            print("2")
+            local meteorItems = game.Workspace.MeteorItems
+            if meteorItems then
+                print("3")
+                for _, group in pairs(meteorItems:GetChildren()) do
+                    print("4")
+                    if group:IsA("Model") and not processedGroups[group] then
+                        for _, part in pairs(group:GetDescendants()) do
+                            print("5")
+                            if part:IsA("BasePart") then
+                                print("6")
+                                local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                                local wasAutoFreezeActive = false
+                                if AutoFreeze then
+                                    wasAutoFreezeActive = true
+                                    AutoFreeze = false
+                                end
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
+                                task.wait(0.5)  
+                                local input = game:GetService("VirtualInputManager")
+                                input:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                                task.wait(0.1)
+                                input:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+                                task.wait(1)
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
+                                if wasAutoFreezeActive then
+                                    AutoFreeze = true
+                                    rememberPosition()
+                                end
+                                processedGroups[group] = true  
+                                break 
                             end
-                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
-                            task.wait(0.5)  
-                            local input = game:GetService("UserInputService")
-                            input:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
-                            task.wait(0.1)
-                            input:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
-                            task.wait(1)
-                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
-                            task.wait(0.5)
-                            if wasAutoFreezeActive then
-                                AutoFreeze = true
-                                rememberPosition()
-                            end
-                            processedGroups[group] = true  
-                            break 
                         end
                     end
                 end
             end
+            task.wait(1)  
         end
-        task.wait(1)  
     end
-end
 
-local AutoLootMeteorsT = Tabs.Main:AddToggle("AutoLootMeteorsT", {
-    Title = "Auto Loot Meteors",
-    Description = "Automatically loot meteors when they appear",
-    Default = false
-})
+    local AutoLootMeteorsT = Tabs.Main:AddToggle("AutoLootMeteorsT", {
+        Title = "Auto Loot Meteors",
+        Description = "Automatically loot meteors when they appear",
+        Default = false
+    })
 
-AutoLootMeteorsT:OnChanged(function(Value)
-    AutoLootMeteors = Value
-    if AutoLootMeteorsT.Value then
-        autoLootMeteors()
-    end
-end)
+    AutoLootMeteorsT:OnChanged(function(Value)
+        print("111")
+        AutoLootMeteors = Value
+        while AutoLootMeteorsT.Value do
+            print("2")
+            local meteorItems = game.Workspace.MeteorItems
+            if meteorItems then
+                print("3")
+                for _, group in pairs(meteorItems:GetChildren()) do
+                    print("4")
+                    if group:IsA("Model") and not processedGroups[group] then
+                        for _, part in pairs(group:GetDescendants()) do
+                            print("5")
+                            if part:IsA("BasePart") then
+                                print("6")
+                                local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                                local wasAutoFreezeActive = false
+                                if AutoFreeze then
+                                    wasAutoFreezeActive = true
+                                    AutoFreeze = false
+                                end
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
+                                task.wait(0.5)  
+                                local input = game:GetService("VirtualInputManager")
+                                input:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                                task.wait(0.1)
+                                input:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+                                task.wait(1)
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
+                            
+                                if wasAutoFreezeActive then
+                                    AutoFreeze = true
+                                    rememberPosition()
+                                end
+                                processedGroups[group] = true  
+                                break 
+                            end
+                        end
+                    end
+                end
+            end
+            task.wait(1)  
+        end
+    end)
 
     local FishAreas = {
         Moosewood_Docks = CFrame.new(330, 133, 268),
