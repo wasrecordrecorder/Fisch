@@ -1037,7 +1037,7 @@ do
         end
     })
 
-
+    
     local section = Tabs.Main:AddSection("Additional")
 
     local AutoSellF = Tabs.Main:AddToggle("AutoSellF", {Title = "Auto Sell Fish", Default = false })
@@ -1089,6 +1089,46 @@ do
                 }
             })
         end
+    })
+
+    local section = Tabs.Main:AddSection("Ancient Isle")
+
+    Tabs.Main:AddButton({
+    Title = "Loot Meteor",
+    Description = "Teleport to a meteor, press E, and return to the original position",
+    Callback = function()
+        local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+        local meteorItems = game.Workspace.MeteorItems
+        if meteorItems then
+            for _, group in pairs(meteorItems:GetChildren()) do
+                if group:IsA("Model") then
+                    for _, part in pairs(group:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            local wasAutoFreezeActive = false
+                            if AutoFreeze then
+                                wasAutoFreezeActive = true
+                                AutoFreeze = false
+                            end
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
+                            task.wait(0.5)  
+                            local input = game:GetService("UserInputService")
+                            input:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
+                            task.wait(0.1)
+                            input:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
+                            task.wait(1)
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
+                            task.wait(0.5)
+                            if wasAutoFreezeActive then
+                                AutoFreeze = true
+                                rememberPosition()
+                            end
+                            return
+                        end
+                    end
+                end
+            end
+        end
+    end
     })
 
     local FishAreas = {
