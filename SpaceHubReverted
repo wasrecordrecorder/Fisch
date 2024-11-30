@@ -665,15 +665,12 @@ function LootAllTreasure()
                 chestsFound = true
                 humanoidRootPart.CFrame = v.CFrame
                 humanoidRootPart.Anchored = true  -- Делаем персонажа Anchored
-                task.wait(0.2)  -- Добавляем небольшую задержку между телепортациями
-
-                -- Зажимаем клавишу "E"
+                task.wait(0.2)
                 virtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-                task.wait(3)  -- Ждем 2 секунды
-                virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)  -- Отпускаем клавишу "E"
-
-                humanoidRootPart.Anchored = false  -- Делаем персонажа UnAnchored
-                task.wait(0.2)  -- Добавляем небольшую задержку перед следующей телепортацией
+                task.wait(3) 
+                virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)  
+                humanoidRootPart.Anchored = false
+                task.wait(0.2)  
             end
         end
 
@@ -1113,11 +1110,13 @@ do
         DesolatePocket = CFrame.new(-1523, -235, -2867),
         BrainPool = CFrame.new(-1797, -143, -3411),
         TheDeephs = CFrame.new(953, -736, 1371),
+        Ancient_Arhive = CFrame.new(-3160, -747.3, 1701.1),
+        Acient_Isle = CFrame.new(6059.7, 399.4, 595.4),
     }
 
     local DropdownArea = Tabs.Teleports:AddDropdown("DropdownArea", {
         Title = "Fish Area teleport",
-        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DesolateDeep", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo", "DesolatePocket", "BrainPool", "TheDeephs"},
+        Values = {"Moosewood_Docks", "Roslit_Bay", "Ocean", "Deep_Ocean", "Snowcap", "DesolateDeep", "Forsaken_Shores", "Lava", "Altar", "SunStone", "The_Arch", "Mushrom", "Statue", "Terrapine", "Vertigo", "DesolatePocket", "BrainPool", "TheDeephs", "Ancient_Arhive", "Acient_Isle"},
         Multi = false,
     })
     DropdownArea:OnChanged(function(Value)
