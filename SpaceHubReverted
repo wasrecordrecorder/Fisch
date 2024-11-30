@@ -1131,6 +1131,59 @@ do
     end
     })
 
+local processedGroups = {} 
+
+local function autoLootMeteors()
+    while AutoLootMeteorsT.Value do
+        local meteorItems = game.Workspace.MeteorItems
+        if meteorItems then
+            for _, group in pairs(meteorItems:GetChildren()) do
+                if group:IsA("Model") and not processedGroups[group] then
+                    for _, part in pairs(group:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                            local wasAutoFreezeActive = false
+                            if AutoFreeze then
+                                wasAutoFreezeActive = true
+                                AutoFreeze = false
+                            end
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
+                            task.wait(0.5)  
+                            local input = game:GetService("UserInputService")
+                            input:SendKeyEvent(true, Enum.KeyCode.E, false, nil)
+                            task.wait(0.1)
+                            input:SendKeyEvent(false, Enum.KeyCode.E, false, nil)
+                            task.wait(1)
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
+                            task.wait(0.5)
+                            if wasAutoFreezeActive then
+                                AutoFreeze = true
+                                rememberPosition()
+                            end
+                            processedGroups[group] = true  
+                            break 
+                        end
+                    end
+                end
+            end
+        end
+        task.wait(1)  
+    end
+end
+
+local AutoLootMeteorsT = Tabs.Main:AddToggle("AutoLootMeteorsT", {
+    Title = "Auto Loot Meteors",
+    Description = "Automatically loot meteors when they appear",
+    Default = false
+})
+
+AutoLootMeteorsT:OnChanged(function(Value)
+    AutoLootMeteors = Value
+    if AutoLootMeteorsT.Value then
+        autoLootMeteors()
+    end
+end)
+
     local FishAreas = {
         Moosewood_Docks = CFrame.new(330, 133, 268),
         Roslit_Bay = CFrame.new(-1538, 142.7, 639),
