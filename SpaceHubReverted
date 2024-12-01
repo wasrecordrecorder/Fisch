@@ -348,6 +348,7 @@ function ZoneCasting()
 
                                 local bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
                                 local plrPos = CFrame.new(selectedZone.Position.X, 151, selectedZone.Position.Z)
+
                                 local platform = Instance.new("Part")
                                 platform.Size = Vector3.new(10, 1, 10) 
                                 platform.Position = plrPos.Position - Vector3.new(0, 1, 0)  
@@ -355,8 +356,16 @@ function ZoneCasting()
                                 platform.Parent = workspace
                                 platform.BrickColor = BrickColor.new("Bright blue")
                                 platform.Transparency = 1.000
+
                                 hasBobber.CFrame = bobberPosition
+
+                                -- Проверка и определение humanoidRootPart
+                                local player = game.Players.LocalPlayer
+                                local character = player.Character or player.CharacterAdded:Wait()
+                                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
                                 humanoidRootPart.CFrame = plrPos
+
                                 if wasAutoFreezeActive then
                                     AutoFreeze = true
                                     rememberPosition()
