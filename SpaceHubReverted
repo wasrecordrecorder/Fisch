@@ -337,7 +337,32 @@ function ZoneCasting()
                                 platform.BrickColor = BrickColor.new("Bright blue")
                                 platform.Transparency = 1.000
                             end
-                        else
+                        elseif selectedZoneCast == "Megalodon" then
+                            local selectedZone = Workspace.zones.fishing:FindFirstChild("Megalodon Default")
+                            if selectedZone then
+                                local wasAutoFreezeActive = false
+                                if AutoFreeze then
+                                    wasAutoFreezeActive = true
+                                    AutoFreeze = false
+                                end
+
+                                local bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
+                                local plrPos = CFrame.new(selectedZone.Position.X, 151, selectedZone.Position.Z)
+                                local platform = Instance.new("Part")
+                                platform.Size = Vector3.new(10, 1, 10) 
+                                platform.Position = plrPos.Position - Vector3.new(0, 1, 0)  
+                                platform.Anchored = true
+                                platform.Parent = workspace
+                                platform.BrickColor = BrickColor.new("Bright blue")
+                                platform.Transparency = 1.000
+                                hasBobber.CFrame = bobberPosition
+                                humanoidRootPart.CFrame = plrPos
+                                if wasAutoFreezeActive then
+                                    AutoFreeze = true
+                                    rememberPosition()
+                                end
+                            end
+                        else    
                             local selectedZone = Workspace.zones.fishing:FindFirstChild(selectedZoneCast)
                             if selectedZone then
                                 local bobberPosition
