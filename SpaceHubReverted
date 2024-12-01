@@ -340,38 +340,17 @@ function ZoneCasting()
                         elseif selectedZoneCast == "Megalodon" then
                             local selectedZone = Workspace.zones.fishing:FindFirstChild("Megalodon Default")
                             if selectedZone then
-                                local wasAutoFreezeActive = false
-                                if AutoFreeze then
-                                    wasAutoFreezeActive = true
-                                    AutoFreeze = false
-                                end
-
                                 local bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
-                                local plrPos = CFrame.new(selectedZone.Position.X, 151, selectedZone.Position.Z)
-
+                                hasBobber.CFrame = bobberPosition
                                 local platform = Instance.new("Part")
-                                platform.Size = Vector3.new(10, 1, 10) 
-                                platform.Position = plrPos.Position - Vector3.new(0, 1, 0)  
+                                platform.Size = platformSize
+                                platform.Position = hasBobber.Position + platformPositionOffset
                                 platform.Anchored = true
-                                platform.Parent = workspace
+                                platform.Parent = hasBobber
                                 platform.BrickColor = BrickColor.new("Bright blue")
                                 platform.Transparency = 1.000
-
-                                hasBobber.CFrame = bobberPosition
-
-                                -- Проверка и определение humanoidRootPart
-                                local player = game.Players.LocalPlayer
-                                local character = player.Character or player.CharacterAdded:Wait()
-                                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-                                humanoidRootPart.CFrame = plrPos
-
-                                if wasAutoFreezeActive then
-                                    AutoFreeze = true
-                                    rememberPosition()
-                                end
                             end
-                        else    
+                        else
                             local selectedZone = Workspace.zones.fishing:FindFirstChild(selectedZoneCast)
                             if selectedZone then
                                 local bobberPosition
@@ -827,7 +806,7 @@ do
     end)
     local DropdownZoneCast = Tabs.Premium:AddDropdown("DropdownZoneCast", {
         Title = "Select zone to cast anywhere",
-        Values = {"Megalodon", "FischFright24", "Isonade", "Bluefin Tuna Abundance", "Ancient Serpent", "Whale Shark", "", "The Depths", "Deep Ocean", "Desolate Deep", "Harvesters Spike", "Moosewood Docks", "Moosewood Ocean", "Moosewood Ocean Mythical", "Moosewood Pond", "Mushgrove Water", "Ocean", "Roslit Bay", "Roslit Bay Ocean", "Roslit Pond", "Roslit Pond Seaweed", "Scallop Ocean", "Snowcap Ocean", "Snowcap Pond", "Sunstone", "Terrapin Ocean", "The Arch", "Vertigo"},
+        Values = {"FischFright24", "Isonade", "Bluefin Tuna Abundance", "Ancient Serpent", "Whale Shark", "", "The Depths", "Deep Ocean", "Desolate Deep", "Harvesters Spike", "Moosewood Docks", "Moosewood Ocean", "Moosewood Ocean Mythical", "Moosewood Pond", "Mushgrove Water", "Ocean", "Roslit Bay", "Roslit Bay Ocean", "Roslit Pond", "Roslit Pond Seaweed", "Scallop Ocean", "Snowcap Ocean", "Snowcap Pond", "Sunstone", "Terrapin Ocean", "The Arch", "Vertigo"},
         Multi = false,
     })
     DropdownZoneCast:OnChanged(function(Value)
@@ -848,6 +827,48 @@ do
             end
         else
             print("No Premium")
+        end
+    end)
+
+    local MegalodonTp = Tabs.Premium:AddToggle("MegalodonTp", {
+    Title = "Auto Tp Megalodon",
+    Description = "Teleports To Megalodon",
+    Default = false
+    })
+
+    MegalodonTp:OnChanged(function(Value)
+        local autoTpMegalodon = Value
+        while autoTpMegalodon do
+            local player = game.Players.LocalPlayer
+            local character = player.Character
+            if character then
+                local selectedZone = Workspace.zones.fishing:FindFirstChild("Megalodon Default")
+                if selectedZone then
+                    local wasAutoFreezeActive = false
+                    if AutoFreeze then
+                        wasAutoFreezeActive = true
+                        AutoFreeze = false
+                    end
+
+                    local plrPos = CFrame.new(selectedZone.Position.X, 145, selectedZone.Position.Z)
+                    local platform = Instance.new("Part")
+                    platform.Size = Vector3.new(10, 1, 10) 
+                    platform.Position = plrPos.Position - Vector3.new(0, 1, 0)  
+                    platform.Anchored = true
+                    platform.Parent = workspace
+                    platform.BrickColor = BrickColor.new("Bright blue")
+                    platform.Transparency = 1.000
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        humanoidRootPart.CFrame = plrPos
+                    end
+                    if wasAutoFreezeActive then
+                        AutoFreeze = true
+                        rememberPosition()
+                    end
+                end
+            end
+            task.wait(1) 
         end
     end)
 
