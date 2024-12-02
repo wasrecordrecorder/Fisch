@@ -857,7 +857,7 @@ do
                     if not platform then
                         platform = Instance.new("Part")
                         platform.Size = Vector3.new(10, 1, 10) 
-                        platform.Position = plrPos.Position - Vector3.new(0, 2, 0)  
+                        platform.Position = plrPos.Position - Vector3.new(0, 3, 0)  
                         platform.Anchored = true
                         platform.Parent = workspace
                         platform.BrickColor = BrickColor.new("Bright blue")
@@ -874,11 +874,28 @@ do
                         rememberPosition()
                     end
                 else
-                    if platform then
-                        platform:Destroy()
-                        platform = nil
+                    if MegalodonTp.Value then
+                        if platform then
+                            platform:Destroy()
+                            platform = nil
+                        end
+                        NeedStop = false
+                        wasAutoFreezeActive = false
+                        if AutoFreeze then
+                            wasAutoFreezeActive = true
+                            AutoFreeze = false
+                            task.wait(0.5)
+                        end
+                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                        if humanoidRootPart then
+                            humanoidRootPart.CFrame = CFrame.new(6694.9, 128.7, 1234.9)
+                        end
+                        task.wait(0.6)
+                        if wasAutoFreezeActive then
+                            AutoFreeze = true
+                            rememberPosition()
+                        end
                     end
-                    NeedStop = false
                 end
             end
             task.wait(1) 
