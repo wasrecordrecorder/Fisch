@@ -637,15 +637,14 @@ function SellFishAndReturnAll()
     end
 end
 
+local currentPosition2 = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+
 function LootTreasure()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:WaitForChild("HumanoidRootPart")
-    local currentPosition2 = rootPart.CFrame
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local virtualInputManager = game:GetService("VirtualInputManager")
+    
     for i, v in pairs(workspace.world.chests:GetDescendants()) do
         if v:IsA("Part") and v:FindFirstChild("ChestSetup") then
             humanoidRootPart.CFrame = v.CFrame
@@ -655,7 +654,8 @@ function LootTreasure()
             task.wait(3)
             virtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             humanoidRootPart.Anchored = false 
-            rootPart = currentPosition2
+            task.wait(0.8)
+            humanoidRootPart.CFrame = currentPosition2
             break
         end
     end
@@ -664,12 +664,9 @@ end
 function LootAllTreasure()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:WaitForChild("HumanoidRootPart")
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local virtualInputManager = game:GetService("VirtualInputManager")
-    local currentPosition1 = rootPart.CFrame
+    
     while true do
         local chestsFound = false
 
@@ -688,7 +685,8 @@ function LootAllTreasure()
         end
 
         if not chestsFound then
-            rootPart = currentPosition1
+            task.wait(0.8)
+            humanoidRootPart.CFrame = currentPosition2
             break 
         end
     end
@@ -836,6 +834,9 @@ do
     Default = false
     })
 
+    local platform = nil 
+    local NeedStop = false
+
     MegalodonTp:OnChanged(function(Value)
         local autoTpMegalodon = Value
         while autoTpMegalodon do
@@ -844,28 +845,40 @@ do
             if character then
                 local selectedZone = Workspace.zones.fishing:FindFirstChild("Megalodon Default")
                 if selectedZone then
+                    autoTpMegalodon = MegalodonTp.Value
+                    NeedStop = true
                     local wasAutoFreezeActive = false
                     if AutoFreeze then
                         wasAutoFreezeActive = true
                         AutoFreeze = false
+                        task.wait(0.5)
+                    end
+                    local plrPos = CFrame.new(selectedZone.Position.X, 145, selectedZone.Position.Z)
+                    if not platform then
+                        platform = Instance.new("Part")
+                        platform.Size = Vector3.new(10, 1, 10) 
+                        platform.Position = plrPos.Position - Vector3.new(0, 2, 0)  
+                        platform.Anchored = true
+                        platform.Parent = workspace
+                        platform.BrickColor = BrickColor.new("Bright blue")
+                        platform.Transparency = 0.5
                     end
 
-                    local plrPos = CFrame.new(selectedZone.Position.X, 145, selectedZone.Position.Z)
-                    local platform = Instance.new("Part")
-                    platform.Size = Vector3.new(10, 1, 10) 
-                    platform.Position = plrPos.Position - Vector3.new(0, 1, 0)  
-                    platform.Anchored = true
-                    platform.Parent = workspace
-                    platform.BrickColor = BrickColor.new("Bright blue")
-                    platform.Transparency = 1.000
                     local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                     if humanoidRootPart then
                         humanoidRootPart.CFrame = plrPos
                     end
+
                     if wasAutoFreezeActive then
                         AutoFreeze = true
                         rememberPosition()
                     end
+                else
+                    if platform then
+                        platform:Destroy()
+                        platform = nil
+                    end
+                    NeedStop = false
                 end
             end
             task.wait(1) 
@@ -873,6 +886,86 @@ do
     end)
 
     local section = Tabs.Main:AddSection("Fishing")
+
+    local isInWaiting = false
+
+    local AutoEquipRod = Tabs.Main:AddToggle("AutoEquipRod", {
+    Title = "Auto Equip Rod",
+    Description = "Automatically equips items containing 'Rod' in their name",
+    Default = false
+    })
+
+    AutoEquipRod:OnChanged(function(Value)
+        local autoEquipRod = Value
+        while autoEquipRod do
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            for _, v in pairs(player.Backpack:GetChildren()) do
+                if not isInWaiting then
+                    if v:IsA("Tool") and string.match(v.Name, "Rod") then
+                        humanoid:EquipTool(v)
+                    end
+                end
+            end
+            task.wait(1) 
+            autoEquipRod = AutoEquipRod.Value  
+        end
+    end)
+
+    local TotemDelay = 30 
+
+    local Slider = Tabs.Main:AddSlider("TotemUseDelay", {
+        Title = "Totem Use Delay",
+        Description = "Change the delay between every shake",
+        Default = 30,
+        Min = 1,
+        Max = 60,
+        Rounding = 1,
+        Callback = function(Value)
+            TotemDelay = Value
+        end
+    })
+    Slider:OnChanged(function(Value)
+        TotemDelay = Value
+    end)
+    Slider:SetValue(30)
+
+    local AutoUseTotem = Tabs.Main:AddToggle("AutoUseTotem", {
+        Title = "Auto Use Sundial Totem",
+        Description = "Automatically equips and uses items containing 'Sundial' in their name",
+        Default = false
+    })
+
+
+    AutoUseTotem:OnChanged(function(Value)
+        local AutoUseTotem1 = Value
+        while AutoUseTotem1 do
+            isInWaiting = true
+            task.wait(4)
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            if not NeedStop then
+                for _, v in pairs(player.Backpack:GetChildren()) do
+                    if v:IsA("Tool") and string.match(v.Name, "Sundial") then
+                        humanoid:EquipTool(v)
+                        task.wait(0.8)
+                        local virtualInputManager = game:GetService("VirtualInputManager")
+                        virtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                        task.wait(0.1)
+                        virtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+
+                        break  
+                    end
+                end
+            end
+            isInWaiting = false
+            task.wait(TotemDelay)
+            AutoUseTotem1 = AutoUseTotem.Value
+        end
+    end)
+
 
     local DropdownShake = Tabs.Main:AddDropdown("DropdownShake", {
         Title = "Select Auto Shake Mode:",
@@ -1500,6 +1593,42 @@ end)
     end)
 
     local section = Tabs.Misc:AddSection("Player")
+
+    local waterWalkPart = nil 
+
+    local WaterWalk = Tabs.Misc:AddToggle("WaterWalk", {
+        Title = "Water Walk",
+        Description = "walking on water",
+        Default = false
+    })
+
+    WaterWalk:OnChanged(function(Value)
+        if Value then
+            -- Создаем прозрачный парт
+            waterWalkPart = Instance.new("Part")
+            waterWalkPart.Size = Vector3.new(15, 1, 15)
+            waterWalkPart.Anchored = true
+            waterWalkPart.Parent = workspace
+            waterWalkPart.Transparency = 1  -- Устанавливаем прозрачность на 1 (полностью прозрачный)
+
+            -- Запускаем цикл для перемещения парта за игроком
+            while WaterWalk.Value do
+                local player = game.Players.LocalPlayer
+                local character = player.Character or player.CharacterAdded:Wait()
+                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+                if humanoidRootPart then
+                    waterWalkPart.Position = Vector3.new(humanoidRootPart.Position.X, 125, humanoidRootPart.Position.Z)
+                end
+                task.wait(0.1)  -- Обновляем позицию каждые 0.1 секунды
+            end
+        else
+            -- Удаляем парт, если он существует
+            if waterWalkPart then
+                waterWalkPart:Destroy()
+                waterWalkPart = nil
+            end
+        end
+    end)
 
     local ToggleNoclip = Tabs.Misc:AddToggle("ToggleNoclip", {Title = "Noclip", Default = false })
     ToggleNoclip:OnChanged(function()
