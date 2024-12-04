@@ -32,6 +32,8 @@ local shadowsFolder = game.Workspace:FindFirstChild("Shadows")
 print("ClientMonsterTools.lua loaded")
 
 local isKirillAfk = false
+local isMEfHStop = false
+local isInWaiting = false
 --<>----<>----<>----< Anti Afk >----<>----<>----<>--
 game.Players.LocalPlayer.Idled:Connect(function()
     VirtualUser:CaptureController()
@@ -163,6 +165,7 @@ local autoShake2 = false
 local autoShake3 = false
 local AutoZoneCast = false
 local autoShakeDelay = 0.1
+local autoShakeDelay1 = 2
 local CastTimeDelay = 0.5
 local autoReel = false
 local AutoCast = false
@@ -180,11 +183,25 @@ local Keybind = Enum.KeyCode.F
 PlayerGUI.ChildAdded:Connect(function(GUI)
     if GUI:IsA("ScreenGui") then
         if GUI.Name == "reel" and autoReel then
-            local reelfinishedEvent = ReplicatedStorage:WaitForChild("events"):WaitForChild("reelfinished")
-            if reelfinishedEvent then
-                while GUI do
-                    task.wait(CastTimeDelay)
-                    reelfinishedEvent:FireServer(100, false)
+            if not isInWaiting then
+                local reelfinishedEvent = ReplicatedStorage:WaitForChild("events"):WaitForChild("reelfinished")
+                if reelfinishedEvent then
+                    while GUI do
+                        task.wait(CastTimeDelay)
+                        reelfinishedEvent:FireServer(100, false)
+                    end
+                end
+            else
+                local player = game.Players.LocalPlayer
+                local character = player.Character
+                if character then
+                    local tool = character:FindFirstChildOfClass("Tool")
+                    if tool then
+                        local hasBobber = tool:FindFirstChild("bobber")
+                        if hasBobber then
+                            hasBobber.CFrame = CFrame.new(1000, 1000, 1000)
+                        end
+                    end
                 end
             end
         end
@@ -437,7 +454,7 @@ PlayerGUI.ChildAdded:Connect(function(GUI)
         local reelfinishedEvent = ReplicatedStorage:WaitForChild("events"):WaitForChild("reelfinished")
         if reelfinishedEvent then
             while GUI do
-                task.wait(2)
+                task.wait(autoShakeDelay1)
                 reelfinishedEvent:FireServer(100, false)
             end
         end
@@ -614,6 +631,7 @@ function Appraise()
 end
 
 function SellFishAndReturnAll()
+    isMEfHStop = true
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local rootPart = character:WaitForChild("HumanoidRootPart")
@@ -630,7 +648,7 @@ function SellFishAndReturnAll()
     task.wait(0.7)
 
     rootPart.CFrame = currentPosition
-
+    isMEfHStop  = false
     if wasAutoFreezeActive then
         AutoFreeze = true
         rememberPosition()
@@ -644,7 +662,7 @@ function LootTreasure()
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local virtualInputManager = game:GetService("VirtualInputManager")
-    
+    isMEfHStop = true
     for i, v in pairs(workspace.world.chests:GetDescendants()) do
         if v:IsA("Part") and v:FindFirstChild("ChestSetup") then
             humanoidRootPart.CFrame = v.CFrame
@@ -656,6 +674,7 @@ function LootTreasure()
             humanoidRootPart.Anchored = false 
             task.wait(0.8)
             humanoidRootPart.CFrame = currentPosition2
+            isMEfHStop = false
             break
         end
     end
@@ -666,7 +685,7 @@ function LootAllTreasure()
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local virtualInputManager = game:GetService("VirtualInputManager")
-    
+    isMEfHStop = true
     while true do
         local chestsFound = false
 
@@ -687,12 +706,14 @@ function LootAllTreasure()
         if not chestsFound then
             task.wait(0.8)
             humanoidRootPart.CFrame = currentPosition2
+            isMEfHStop = false
             break 
         end
     end
 end
 
 function SellFishAndReturnOne()
+    isMEfHStop = true
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local rootPart = character:WaitForChild("HumanoidRootPart")
@@ -709,7 +730,7 @@ function SellFishAndReturnOne()
     task.wait(0.7)
 
     rootPart.CFrame = currentPosition
-
+    isMEfHStop = false
     if wasAutoFreezeActive then
         AutoFreeze = true
         rememberPosition()
@@ -813,7 +834,7 @@ do
     end)
     Tabs.Premium:AddParagraph({
         Title = "Zone Helper",
-        Content = "First 3 - Event zones\nFischFright24 - Fright Pool"
+        Content = "First 6 - Event zones\nFischFright24 - Fright Pool"
     })
     
     local ToggleZoneCast1214 = Tabs.Premium:AddToggle("ToggleZoneCast1214", {Title = "Enable cast selected zone", Default = false })
@@ -857,7 +878,7 @@ do
                     if not platform then
                         platform = Instance.new("Part")
                         platform.Size = Vector3.new(10, 1, 10) 
-                        platform.Position = plrPos.Position - Vector3.new(0, 3, 0)  
+                        platform.Position = plrPos.Position - Vector3.new(0, 3.5, 0)  
                         platform.Anchored = true
                         platform.Parent = workspace
                         platform.BrickColor = BrickColor.new("Bright blue")
@@ -875,25 +896,27 @@ do
                     end
                 else
                     if MegalodonTp.Value then
-                        if platform then
-                            platform:Destroy()
-                            platform = nil
-                        end
-                        NeedStop = false
-                        wasAutoFreezeActive = false
-                        if AutoFreeze then
-                            wasAutoFreezeActive = true
-                            AutoFreeze = false
-                            task.wait(0.5)
-                        end
-                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                        if humanoidRootPart then
-                            humanoidRootPart.CFrame = CFrame.new(6694.9, 128.7, 1234.9)
-                        end
-                        task.wait(0.6)
-                        if wasAutoFreezeActive then
-                            AutoFreeze = true
-                            rememberPosition()
+                        if not isMEfHStop then
+                            if platform then
+                                platform:Destroy()
+                                platform = nil
+                            end
+                            NeedStop = false
+                            wasAutoFreezeActive = false
+                            if AutoFreeze then
+                                wasAutoFreezeActive = true
+                                AutoFreeze = false
+                                task.wait(0.5)
+                            end
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                humanoidRootPart.CFrame = CFrame.new(6694.9, 128.5, 1234.9)
+                            end
+                            task.wait(0.6)
+                            if wasAutoFreezeActive then
+                                AutoFreeze = true
+                                rememberPosition()
+                            end
                         end
                     end
                 end
@@ -901,10 +924,88 @@ do
             task.wait(1) 
         end
     end)
+    local section = Tabs.Main:AddSection("Totems")
+
+    local TotemDelay = 30 
+
+    local Slider = Tabs.Main:AddSlider("TotemUseDelay", {
+        Title = "Totem Use Delay",
+        Description = "Change the delay between every shake",
+        Default = 30,
+        Min = 1,
+        Max = 60,
+        Rounding = 1,
+        Callback = function(Value)
+            TotemDelay = Value
+        end
+    })
+    Slider:OnChanged(function(Value)
+        TotemDelay = Value
+    end)
+    Slider:SetValue(30)
+
+
+    local totemList = {
+    "Sundial Totem",
+    "Eclipse Totem",
+    "Meteor Totem",
+    "Aurora Totem",
+    "Windset Totem",
+    "Tempest Totem"
+    }
+
+    local selectedTotem = "Sundial Totem"
+
+    local DropdownTotem = Tabs.Main:AddDropdown("DropdownTotem", {
+    Title = "Select Totem",
+    Values = totemList,
+    Multi = false,
+    Default = 1,
+    })
+
+    DropdownTotem:OnChanged(function(Value)
+        selectedTotem = Value
+    end)
+
+
+    local AutoUseTotem = Tabs.Main:AddToggle("AutoUseTotem", {
+        Title = "Auto Use Selected Totem",
+        Description = "Automatically equips and uses selected totem",
+        Default = false
+    })
+
+
+    AutoUseTotem:OnChanged(function(Value)
+        local AutoUseTotem1 = Value
+        while AutoUseTotem1 do
+            isInWaiting = true
+            task.wait(4)
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            if not NeedStop then
+                for _, v in pairs(player.Backpack:GetChildren()) do
+                    if v:IsA("Tool") and string.match(v.Name, selectedTotem) then
+                        humanoid:EquipTool(v)
+                        task.wait(0.8)
+                        local virtualInputManager = game:GetService("VirtualInputManager")
+                        virtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                        task.wait(0.1)
+                        virtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+
+                        break  
+                    end
+                end
+            end
+            isInWaiting = false
+            task.wait(TotemDelay)
+            AutoUseTotem1 = AutoUseTotem.Value
+        end
+    end)
+
+
 
     local section = Tabs.Main:AddSection("Fishing")
-
-    local isInWaiting = false
 
     local AutoEquipRod = Tabs.Main:AddToggle("AutoEquipRod", {
     Title = "Auto Equip Rod",
@@ -927,59 +1028,6 @@ do
             end
             task.wait(1) 
             autoEquipRod = AutoEquipRod.Value  
-        end
-    end)
-
-    local TotemDelay = 30 
-
-    local Slider = Tabs.Main:AddSlider("TotemUseDelay", {
-        Title = "Totem Use Delay",
-        Description = "Change the delay between every shake",
-        Default = 30,
-        Min = 1,
-        Max = 60,
-        Rounding = 1,
-        Callback = function(Value)
-            TotemDelay = Value
-        end
-    })
-    Slider:OnChanged(function(Value)
-        TotemDelay = Value
-    end)
-    Slider:SetValue(30)
-
-    local AutoUseTotem = Tabs.Main:AddToggle("AutoUseTotem", {
-        Title = "Auto Use Sundial Totem",
-        Description = "Automatically equips and uses items containing 'Sundial' in their name",
-        Default = false
-    })
-
-
-    AutoUseTotem:OnChanged(function(Value)
-        local AutoUseTotem1 = Value
-        while AutoUseTotem1 do
-            isInWaiting = true
-            task.wait(4)
-            local player = game.Players.LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
-            local humanoid = character:WaitForChild("Humanoid")
-            if not NeedStop then
-                for _, v in pairs(player.Backpack:GetChildren()) do
-                    if v:IsA("Tool") and string.match(v.Name, "Sundial") then
-                        humanoid:EquipTool(v)
-                        task.wait(0.8)
-                        local virtualInputManager = game:GetService("VirtualInputManager")
-                        virtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
-                        task.wait(0.1)
-                        virtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
-
-                        break  
-                    end
-                end
-            end
-            isInWaiting = false
-            task.wait(TotemDelay)
-            AutoUseTotem1 = AutoUseTotem.Value
         end
     end)
 
@@ -1027,6 +1075,22 @@ do
         autoShakeDelay = Value
     end)
     Slider1:SetValue(0.5)
+
+    local Slider2 = Tabs.Main:AddSlider("SliderReelDel", {
+        Title = "Reel Delay",
+        Description = "Change the delay between catch fish",
+        Default = 5,
+        Min = 0.1,
+        Max = 2,
+        Rounding = 2,
+        Callback = function(Value)
+            autoShakeDelay1 = Value
+        end
+    })
+    Slider2:OnChanged(function(Value)
+        autoShakeDelay1 = Value
+    end)
+    Slider2:SetValue(2)
     
     local autoReelCastShakeT = Tabs.Main:AddToggle("autoReelCastShakeT", {Title = "Auto Fish", Default = false })
     autoReelCastShakeT:OnChanged(function(Value)
@@ -1072,6 +1136,38 @@ do
     Default = false
     })
 
+    local MBBaits = {
+    "Bagel",
+    "Worm",
+    "Insect",
+    "Flakes",
+    "Garbage",
+    "Maggot",
+    "Shrimp",
+    "Squid",
+    "Seaweed",
+    "Magnet",
+    "Minnow",
+    "Coral",
+    "Super Flakes",
+    "Coal",
+    "Rapid Catcher",
+    "Truffle Worm",
+    "Weird Algae",
+    "Fish Head",
+    "Night Shrimp",
+    "Instant Catcher",
+    "Deep Coral",
+    "Shark Head"
+    }
+
+    local BaitPriorities = {
+    ["Shark Head"] = 1,
+    ["Weird Algae"] = 2,
+    ["Fisch Head"] = 3,
+    ["Squid"] = 4
+    }
+
     local function AutoBait()
         while AutoBaitr.Value do
             local Player = game.Players.LocalPlayer
@@ -1079,13 +1175,26 @@ do
             local Baits = {}
 
             for _, Item in pairs(Backpack:GetChildren()) do
-                if string.match(Item.Name, "Rapid Catcher") or string.match(Item.Name, "Maggot") or string.match(Item.Name, "Shrimp") or string.match(Item.Name, "Insect") or string.match(Item.Name, "Night Shrimp") or string.match(Item.Name, "Weird Algae") or string.match(Item.Name, "Truffle Worm") or string.match(Item.Name, "Super Flakes") or string.match(Item.Name, "Minnow") or string.match(Item.Name, "Bagel") or string.match(Item.Name, "Magnet") or string.match(Item.Name, "Squid") or string.match(Item.Name, "Flakes") or string.match(Item.Name, "Seaweed") then
-                    table.insert(Baits, Item)
+                for _, baitName in pairs(MBBaits) do
+                    if string.match(Item.Name, baitName) then
+                        table.insert(Baits, Item)
+                        break
+                    end
                 end
             end
+
             if #Baits > 0 then
+                table.sort(Baits, function(a, b)
+                    local priorityA = BaitPriorities[a.Name] or math.huge
+                    local priorityB = BaitPriorities[b.Name] or math.huge
+                    return priorityA < priorityB
+                end)
+
                 local SelectedBait = Baits[1]
-                
+                if SelectedBait:FindFirstChild("equip") then
+                    SelectedBait.equip:InvokeServer()
+                end
+
                 print("Equipped bait:", SelectedBait.Name)
             else
                 print("No bait found!")
@@ -1277,10 +1386,12 @@ do
         local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
         local meteorItems = game.Workspace.MeteorItems
         if meteorItems then
+            isMEfHStop = true
             for _, group in pairs(meteorItems:GetChildren()) do
                 if group:IsA("Model") then
                     for _, part in pairs(group:GetDescendants()) do
                         if part:IsA("BasePart") then
+                            task.wait(2)
                             local wasAutoFreezeActive = false
                             if AutoFreeze then
                                 wasAutoFreezeActive = true
@@ -1299,6 +1410,8 @@ do
                                 AutoFreeze = true
                                 rememberPosition()
                             end
+                            task.wait(2)
+                            isMEfHStop = false
                             return
                         end
                     end
@@ -1323,9 +1436,12 @@ do
                         for _, part in pairs(group:GetDescendants()) do
                             print("5")
                             if part:IsA("BasePart") then
+                                task.wait(2)
                                 print("6")
                                 local initialPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
                                 local wasAutoFreezeActive = false
+                                isMEfHStop = true
+                                task.wait(0.5)
                                 if AutoFreeze then
                                     wasAutoFreezeActive = true
                                     AutoFreeze = false
@@ -1334,7 +1450,9 @@ do
                                 task.wait(0.5)  
                                 local input = game:GetService("VirtualInputManager")
                                 input:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                                input:SendKeyEvent(false, Enum.KeyCode.E, false, game)
                                 task.wait(0.1)
+                                input:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                                 input:SendKeyEvent(false, Enum.KeyCode.E, false, game)
                                 task.wait(1)
                                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(initialPosition)
@@ -1343,6 +1461,8 @@ do
                                     rememberPosition()
                                 end
                                 processedGroups[group] = true  
+                                task.wait(2)
+                                isMEfHStop = false
                                 break 
                             end
                         end
